@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -30,7 +31,7 @@ func main() {
 	mapTest := splitKeyValue(grossFile)
 
 	// --- Requesting user answers
-	fmt.Println("Try to think fast!")
+	fmt.Println("You have 15 seconds, try to think fast!")
 	answers := printingTest(mapTest)
 
 	// --- Getting the result
@@ -71,8 +72,14 @@ func splitKeyValue(grossFile []string) map[string]string {
 func printingTest(fileLines map[string]string) map[string]string {
 	reader := bufio.NewReader(os.Stdin)
 	userAnswers := make(map[string]string)
+	i := 1
+	finish := time.Now().Add(time.Second * 15)
 	for k := range fileLines {
-		fmt.Printf("%s:", k)
+		if time.Now().After(finish) {
+			fmt.Println("NO MORE TIME!")
+			break
+		}
+		fmt.Printf("Problem #%d - %s:", i, k)
 		answer, err := reader.ReadString('\n')
 		answer = strings.TrimSpace(answer)
 		if err != nil {
@@ -80,6 +87,7 @@ func printingTest(fileLines map[string]string) map[string]string {
 		}
 
 		userAnswers[k] = answer
+		i++
 	}
 	return userAnswers
 }
